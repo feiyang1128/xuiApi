@@ -37,8 +37,8 @@ jobs:
           CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
-          cp x-ui.service x-ui/x-ui.service
-          cp x-ui.sh x-ui/x-ui.sh
+          cp xui.service x-ui/x-ui.service
+          cp xui.sh x-ui/x-ui.sh
           cd x-ui
           mv xui-release x-ui
           mkdir bin
@@ -65,7 +65,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Download URL
-        run: echo "Download URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/x-ui-linux-amd64.tar.gz"
+        run: |
+          echo "Download URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/x-ui-linux-amd64.tar.gz"
 
   linuxarm64build:
     name: build x-ui arm64 version
@@ -84,8 +85,8 @@ jobs:
           CGO_ENABLED=1 GOOS=linux GOARCH=arm64 CC=aarch64-linux-gnu-gcc go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
-          cp x-ui.service x-ui/x-ui.service
-          cp x-ui.sh x-ui/x-ui.sh
+          cp xui.service x-ui/x-ui.service
+          cp xui.sh x-ui/x-ui.sh
           cd x-ui
           mv xui-release x-ui
           mkdir bin
@@ -112,4 +113,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Download URL
-        run: echo "Download URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/x-ui-linux-arm64.tar.gz"
+        run: |
+          echo "Download URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/x-ui-linux-arm64.tar.gz"

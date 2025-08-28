@@ -1,0 +1,48 @@
+name: Build x-ui
+
+on:
+  push:
+    branches:
+      - main  # 或者你的目标分支
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # 设置 Go 环境
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.18'  # 使用需要的 Go 版本
+
+      # 安装依赖
+      - name: Install dependencies
+        run: |
+          go mod tidy
+          go mod vendor
+
+      # 编译项目
+      - name: Build x-ui for arm64 and amd64
+        run: |
+          # 编译 x-ui-linux-arm64
+          GOARCH=arm64 GOOS=linux go build -o x-ui-linux-arm64
+          tar -czf x-ui-linux-arm64.tar.gz x-ui-linux-arm64
+          
+          # 编译 x-ui-linux-amd64
+          GOARCH=amd64 GOOS=linux go build -o x-ui-linux-amd64
+          tar -czf x-ui-linux-amd64.tar.gz x-ui-linux-amd64
+
+      # 发布构建产物
+      - name: Upload release assets
+        uses: actions/upload-artifact@v2
+        with:
+          name: x-ui-linux-binaries
+          path: |
+            x-ui-linux-arm64.tar.gz
+            x-ui-linux-amd64.tar.gz

@@ -14,13 +14,12 @@ jobs:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GAYHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           draft: true
           prerelease: true
+
   linuxamd64build:
     name: build x-ui amd64 version
     needs: release
@@ -48,19 +47,17 @@ jobs:
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
           mv xray xray-linux-amd64
-          cd ..
-          cd ..
+          cd .. 
       - name: package
         run: tar -zcvf x-ui-linux-amd64.tar.gz x-ui
       - name: upload
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GAYHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: x-ui-linux-amd64.tar.gz
           asset_name: x-ui-linux-amd64.tar.gz
           asset_content_type: application/gzip
+
   linuxarm64build:
     name: build x-ui arm64 version
     needs: release
@@ -90,19 +87,17 @@ jobs:
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
           mv xray xray-linux-arm64
-          cd ..
-          cd ..
+          cd .. 
       - name: package
         run: tar -zcvf x-ui-linux-arm64.tar.gz x-ui
       - name: upload
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GAYHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: x-ui-linux-arm64.tar.gz
           asset_name: x-ui-linux-arm64.tar.gz
           asset_content_type: application/gzip
+
   linuxs390xbuild:
     name: build x-ui s390x version
     needs: release
@@ -133,13 +128,10 @@ jobs:
           wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
           mv xray xray-linux-s390x
           cd ..
-          cd ..
       - name: package
         run: tar -zcvf x-ui-linux-s390x.tar.gz x-ui
       - name: upload
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GAYHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: x-ui-linux-s390x.tar.gz

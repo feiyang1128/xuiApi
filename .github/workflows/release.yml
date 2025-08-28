@@ -37,8 +37,8 @@ jobs:
           CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
-          cp xui.service x-ui/x-ui.service
-          cp xui.sh x-ui/x-ui.sh
+          cp x-ui.service x-ui/x-ui.service
+          cp x-ui.sh x-ui/x-ui.sh
           cd x-ui
           mv xui-release x-ui
           mkdir bin
@@ -63,8 +63,7 @@ jobs:
           asset_content_type: application/gzip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Download URL
+      - name: Generate Download URL for amd64
         run: |
           echo "Download URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/x-ui-linux-amd64.tar.gz"
 
@@ -86,7 +85,7 @@ jobs:
           mkdir x-ui
           cp xui-release x-ui/xui-release
           cp xui.service x-ui/x-ui.service
-          cp xui.sh x-ui/x-ui.sh
+          cp x-ui.sh x-ui/x-ui.sh
           cd x-ui
           mv xui-release x-ui
           mkdir bin
@@ -111,7 +110,53 @@ jobs:
           asset_content_type: application/gzip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Download URL
+      - name: Generate Download URL for arm64
         run: |
           echo "Download URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/x-ui-linux-arm64.tar.gz"
+
+  linuxs390xbuild:
+    name: build x-ui s390x version
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+      - name: build linux s390x version
+        run: |
+          sudo apt-get update
+          sudo apt install gcc-s390x-linux-gnu -y
+          CGO_ENABLED=1 GOOS=linux GOARCH=s390x CC=s390x-linux-gnu-gcc go build -o xui-release -v main.go
+          mkdir x-ui
+          cp xui-release x-ui/xui-release
+          cp xui.service x-ui/x-ui.service
+          cp xui.sh x-ui/x-ui.sh
+          cd x-ui
+          mv xui-release x-ui
+          mkdir bin
+          cd bin
+          wget https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-s390x.zip
+          unzip Xray-linux-s390x.zip
+          rm -f Xray-linux-s390x.zip geoip.dat geosite.dat
+          wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+          wget https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+          mv xray xray-linux-s390x
+          cd ..
+      - name: package
+        run: |
+          cd x-ui
+          tar -zcvf ../x-ui-linux-s390x.tar.gz .
+      - name: upload
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: x-ui-linux-s390x.tar.gz
+          asset_name: x-ui-linux-s390x.tar.gz
+          asset_content_type: application/gzip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate Download URL for s390x
+        run: |
+          echo "Download URL: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/x-ui-linux-s390x.tar.gz"
